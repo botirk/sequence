@@ -1,0 +1,59 @@
+* {
+    box-sizing: border-box;
+    background-color: white;
+}
+
+html, body {
+    margin: 0;
+    padding: 16px;
+}
+
+.cursor-p:not([disabled="true"]) {
+    cursor: pointer;
+}
+
+.top-buttons {
+    border-bottom: 6px solid #ccc;
+    padding-bottom: 12px;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+}
+
+.top-buttons .first, .top-buttons .second {
+    display: flex;
+    gap: 5px;
+}
+
+#select-folder {
+    display: none;
+}
+
+.top-buttons .add, .top-buttons .save, label[for="select-folder"] {
+    height: 40px;
+    aspect-ratio: 1 / 1;
+    background-repeat: no-repeat;
+    background-size: 70% 70%;
+    background-position: center;
+
+    border: 2px solid #ccc;
+}
+
+label[for="select-folder"] {
+    background-image: url(upload-icon.svg);
+}
+
+.top-buttons .add {
+    background-image: url(plus-icon.svg);
+}
+
+.top-buttons .save {
+    background-image: url(download-icon.svg);
+}
+
+@media (hover: hover) {
+    label[for="select-folder"]:hover, .top-buttons .add:hover, .top-buttons .save:hover {
+        background-color: #ccc;
+    }
+}
