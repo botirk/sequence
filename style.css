@@ -6,6 +6,7 @@
 html, body {
     margin: 0;
     padding: 16px;
+    font-size: 20px;
 }
 
 .cursor-p:not([disabled="true"]) {
@@ -26,11 +27,12 @@ html, body {
     gap: 5px;
 }
 
-#select-folder {
+input[type="file"] {
     display: none;
 }
 
-.top-buttons .add, .top-buttons .save, label[for="select-folder"] {
+.top-buttons .add, .top-buttons .save, label[for="select-folder"], .li-container .select-pic {
+    display: inline-block;
     height: 40px;
     aspect-ratio: 1 / 1;
     background-repeat: no-repeat;
@@ -41,7 +43,7 @@ html, body {
 }
 
 label[for="select-folder"] {
-    background-image: url(upload-icon.svg);
+    background-image: url(folder-line-icon.svg);
 }
 
 .top-buttons .add {
@@ -52,8 +54,49 @@ label[for="select-folder"] {
     background-image: url(download-icon.svg);
 }
 
+.list-container {
+    padding-top: 12px;
+
+    display: grid;
+    gap: 10px;
+}
+
+.li-container {
+    display: grid;
+    grid-template-columns: auto 10fr auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.li-container .select-pic {
+    height: 70px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.li-container .select-pic:not(:has(img)) {
+    background-image: url(image-file-icon.svg);
+}
+
+.li-container .select-pic img {
+    width: 100%;
+    max-height: 100%;
+}
+
+.li-container .text {
+    font-size: 20px;
+    padding: 12px;
+}
+
+.li-container select {
+    font-size: 20px;
+    padding: 12px;
+}
+
 @media (hover: hover) {
-    label[for="select-folder"]:hover, .top-buttons .add:hover, .top-buttons .save:hover {
+    label[for="select-folder"]:hover, .top-buttons .add:hover, .top-buttons .save:hover, .li-container .select-pic:hover {
         background-color: #ccc;
     }
 }

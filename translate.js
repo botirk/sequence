@@ -2,8 +2,12 @@
 
 const translationRu = {
     selectFolder: 'Выбрать папку',
+    selectPic: 'Выбрать картинку',
     saveFolder: 'Сохранить папку',
-    addItem: 'Добавить предмет'
+    addItem: 'Добавить предмет',
+    start: 'Верх',
+    center: 'Центр',
+    end: 'Низ'
 }
 
 /**
