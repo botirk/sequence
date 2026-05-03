@@ -1,12 +1,14 @@
 // @ts-check
+import './assets/jszip.min.js'
 import { getTranslation } from './translate.js'
-import './jszip.min.js'
+
+// @ts-expect-error
+const JSZip = /** @type {any} */ window.JSZip;
 
 /**
  * @typedef {Object} ListItem
  * @prop {number} id
- * @prop {string|void} imgUrl
- * @prop {HTMLImageElement|void} imgEl
+ * @prop {File|void} imgFile
  * @prop {string} description
  * @prop {'start'|'center'|'end'|string} descriptionPosition
  * @prop {'black'|'white'|'red'|'blue'|'green'|string} descriptionColor
@@ -28,11 +30,10 @@ const createFreshListItem = (list) => {
         descriptionPosition: 'end',
         descriptionColor: 'black',
         id: nextId,
-        imgUrl: undefined,
-        imgEl: undefined,
+        imgFile: undefined,
     }
 
-    list.unshift(result)
+    list.push(result)
     return result
 }
 
@@ -71,6 +72,7 @@ const createTopMenu = (list) => {
     saveButton.type = 'button'
     saveButton.className = 'save cursor-p'
     saveButton.title = getTranslation('saveFolder')
+    saveButton.onclick = () => saveList(list)
     firstPart.appendChild(saveButton)
 
     const secondPart = document.createElement('div')
@@ -83,8 +85,10 @@ const createTopMenu = (list) => {
     addButton.title = getTranslation('addItem')
     addButton.onclick = () => {
         const li = createFreshListItem(list)
-        document.querySelector('.list-container')?.prepend(createListItem(li, list))
+        const liEl = createListItem(li, list)
+        document.querySelector('.list-container')?.append(liEl)
         updateArrows()
+        liEl.scrollIntoView()
     }
     secondPart.appendChild(addButton)
 
@@ -122,16 +126,16 @@ const createListItem = (listItem, listOwner) => {
     selectPicButton.id = `select-pic-${listItem.id}`
     selectPicButton.type = 'file'
     selectPicButton.accept = '.jpg, .jpeg, .png, image/jpeg, image/png'
-    selectPicButton.onchange = (e) => {
+    selectPicButton.onchange = () => {
         if (!selectPicButton.files) return
-        const img = selectPicButton.files.item(0)
+        const img = selectPicButton.files[0]
         if (!img) return
         const imgEl = document.createElement('img')
         imgEl.src = URL.createObjectURL(img)
         imgEl.draggable = false
         labelSelectPicButton.textContent = ''
         labelSelectPicButton.appendChild(imgEl)
-        listItem.imgEl = imgEl
+        listItem.imgFile = img
         if (listItem.description.trim().length) {
             selectPos.disabled = false
             selectColor.disabled = false
@@ -146,7 +150,7 @@ const createListItem = (listItem, listOwner) => {
         labelSelectPicButton.onpointerup = (e) => {
             e.stopImmediatePropagation()
             labelSelectPicButton.querySelector('img')?.remove()
-            listItem.imgEl = undefined
+            listItem.imgFile = undefined
             selectPos.disabled = true
             selectColor.disabled = true
             selectPicButton.disabled = false
@@ -164,7 +168,7 @@ const createListItem = (listItem, listOwner) => {
         if (!listItem.description.trim().length) {
             selectPos.disabled = true
             selectColor.disabled = true
-        } else if (listItem.imgEl) {
+        } else if (listItem.imgFile) {
             selectPos.disabled = false
             selectColor.disabled = false
         }
@@ -177,7 +181,8 @@ const createListItem = (listItem, listOwner) => {
 
     const selectPos = document.createElement('select')
     selectPos.title = getTranslation('selectTextPos')
-    if (!listItem.description.trim().length || !listItem.imgEl) selectPos.disabled = true
+    selectPos.onchange = () => listItem.descriptionPosition = selectPos.value
+    if (!listItem.description.trim().length || !listItem.imgFile) selectPos.disabled = true
     selectGroup.appendChild(selectPos)
     {
         const option1 = document.createElement('option')
@@ -199,17 +204,16 @@ const createListItem = (listItem, listOwner) => {
 
     const selectColor = document.createElement('select')
     selectColor.title = getTranslation('selectTextColor')
-    if (!listItem.description.trim().length || !listItem.imgEl) selectColor.disabled = true
+    selectColor.onchange = () => listItem.descriptionColor = selectPos.value
+    if (!listItem.description.trim().length || !listItem.imgFile) selectColor.disabled = true
     selectGroup.appendChild(selectColor)
-    {
-        for (const color of ['black', 'white', 'red', 'green', 'yellow', 'blue']) {
-            const option = document.createElement('option')
-            option.value = color
-            // @ts-expect-error such type
-            option.text = getTranslation(color)
-            option.selected = (listItem.descriptionPosition === 'start')
-            selectColor.appendChild(option)
-        }
+    for (const color of ['black', 'white', 'red', 'green', 'yellow', 'blue']) {
+        const option = document.createElement('option')
+        option.value = color
+        // @ts-expect-error such type
+        option.text = getTranslation(color)
+        option.selected = (listItem.descriptionPosition === color)
+        selectColor.appendChild(option)
     }
 
     const arrowGroup = document.createElement('div')
@@ -286,13 +290,34 @@ const createList = (list) => {
     return listContainer
 }
 
+/**
+ * 
+ * @param {List} list 
+ */
+const saveList = async (list) => {
+    const filteredList = list.filter((li) => li.description.trim() || li.imgFile)
+    const listWithoutFiles = filteredList.map(li => ({ ...li, imgFile: (li.imgFile ? `${li.id}.${li.imgFile.name.split('.').pop()}` : undefined) }))
+
+    const zip = new JSZip()
+    zip.file('list.json', JSON.stringify(listWithoutFiles))
+    const content = await zip.generateAsync({type: 'blob'})
+
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(content)
+    link.download = "list.zip"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(link.href)
+}
+
 const renderMainMenu = () => {
     /** @type {List} */
     const list = []
 
     container.textContent = ''
-    container.append(createTopMenu(list))
     container.append(createList(list))
+    container.append(createTopMenu(list))
 }
 
 renderMainMenu()
