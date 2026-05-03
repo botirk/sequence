@@ -19,7 +19,8 @@ const translationRu = {
     'moveUp': 'Переместить выше',
     'moveDown': 'Переместить ниже',
     'deleteItem': 'Удалить предмет',
-    fillDesc: 'Ввести описание'
+    fillDesc: 'Ввести описание',
+    deletePic: 'Удалить картинку',
 }
 
 /**

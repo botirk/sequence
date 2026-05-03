@@ -127,6 +127,7 @@ const createListItem = (listItem, listOwner) => {
         if (!img) return
         const imgEl = document.createElement('img')
         imgEl.src = URL.createObjectURL(img)
+        imgEl.draggable = false
         labelSelectPicButton.textContent = ''
         labelSelectPicButton.appendChild(imgEl)
         listItem.imgEl = imgEl
@@ -134,8 +135,23 @@ const createListItem = (listItem, listOwner) => {
             selectPos.disabled = false
             selectColor.disabled = false
         }
+        switchPicUpload()
     }
     liContainer.appendChild(selectPicButton)
+
+    const switchPicUpload = () => {
+        labelSelectPicButton.title = getTranslation('deletePic')
+        selectPicButton.disabled = true
+        labelSelectPicButton.onpointerup = (e) => {
+            e.stopImmediatePropagation()
+            labelSelectPicButton.querySelector('img')?.remove()
+            listItem.imgEl = undefined
+            selectPos.disabled = true
+            selectColor.disabled = true
+            selectPicButton.disabled = false
+            labelSelectPicButton.title = getTranslation('selectPic')
+        }
+    }
 
     const textInput = document.createElement('input')
     textInput.size = 1
