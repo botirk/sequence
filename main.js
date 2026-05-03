@@ -138,6 +138,7 @@ const createListItem = (listItem, listOwner) => {
     liContainer.appendChild(selectPicButton)
 
     const textInput = document.createElement('input')
+    textInput.size = 1
     textInput.className = 'text'
     textInput.title = getTranslation('fillDesc')
     textInput.setAttribute('autocomplete', 'false')
