@@ -7,7 +7,19 @@ const translationRu = {
     addItem: 'Добавить предмет',
     start: 'Верх',
     center: 'Центр',
-    end: 'Низ'
+    end: 'Низ',
+    'black': 'Чёрный',
+    'white': 'Белый', 
+    'red': 'Красный', 
+    'green': 'Зелёный', 
+    'yellow': 'Жёлтый', 
+    'blue': 'Синий',
+    'selectTextColor': 'Выбрать цвет текста',
+    'selectTextPos': 'Выбрать позицию текста',
+    'moveUp': 'Переместить выше',
+    'moveDown': 'Переместить ниже',
+    'deleteItem': 'Удалить предмет',
+    fillDesc: 'Ввести описание'
 }
 
 /**

@@ -1,12 +1,25 @@
-* {
+html,
+body {
+    margin: 0;
+    padding: 16px;
+    font-size: 20px;
+}
+
+button {
+    all: unset;
+}
+
+button:not([disabled]) {
+    cursor: pointer;
+}
+
+*, button {
     box-sizing: border-box;
     background-color: white;
 }
 
-html, body {
-    margin: 0;
-    padding: 16px;
-    font-size: 20px;
+button:disabled, select:disabled {
+    background-color: #bbb;
 }
 
 .cursor-p:not([disabled="true"]) {
@@ -22,7 +35,8 @@ html, body {
     justify-content: space-between;
 }
 
-.top-buttons .first, .top-buttons .second {
+.top-buttons .first,
+.top-buttons .second {
     display: flex;
     gap: 5px;
 }
@@ -31,19 +45,21 @@ input[type="file"] {
     display: none;
 }
 
-.top-buttons .add, .top-buttons .save, label[for="select-folder"], .li-container .select-pic {
+.top-buttons .add,
+.top-buttons .save,
+label[for="select-zip"],
+.li-container .select-pic {
     display: inline-block;
     height: 40px;
     aspect-ratio: 1 / 1;
     background-repeat: no-repeat;
     background-size: 70% 70%;
     background-position: center;
-
     border: 2px solid #ccc;
 }
 
-label[for="select-folder"] {
-    background-image: url(folder-line-icon.svg);
+label[for="select-zip"] {
+    background-image: url(zip-file-icon.svg);
 }
 
 .top-buttons .add {
@@ -63,13 +79,12 @@ label[for="select-folder"] {
 
 .li-container {
     display: grid;
-    grid-template-columns: auto 10fr auto;
+    grid-template-columns: auto 10fr auto auto;
     gap: 10px;
-    align-items: center;
 }
 
 .li-container .select-pic {
-    height: 70px;
+    height: 82px;
 
     display: flex;
     justify-content: center;
@@ -90,13 +105,55 @@ label[for="select-folder"] {
     padding: 12px;
 }
 
-.li-container select {
+.li-container .select-group {
+    display: grid;
+    gap: 2px;
+    grid-template-rows: 1fr 1fr;
+}
+
+.li-container .select-group select {
     font-size: 20px;
-    padding: 12px;
+}
+
+.li-container .arrow-group {
+    width: 26px;
+
+    display: grid;
+    align-content: space-between;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.li-container .arrow-group .up,
+.li-container .arrow-group .down,
+.li-container .arrow-group .delete {
+    aspect-ratio: 1 / 1;
+    background-repeat: no-repeat;
+    background-size: 70% 70%;
+    background-position: center;
+    border: 2px solid #ccc;
+}
+
+.li-container .arrow-group .up {
+    background-image: url(arrow-top-icon.svg);
+}
+
+.li-container .arrow-group .down {
+    background-image: url(arrow-bottom-icon.svg);
+}
+
+.li-container .arrow-group .delete {
+    background-image: url(recycle-bin-line-icon.svg);
 }
 
 @media (hover: hover) {
-    label[for="select-folder"]:hover, .top-buttons .add:hover, .top-buttons .save:hover, .li-container .select-pic:hover {
+
+    label[for="select-zip"]:hover,
+    .top-buttons .add:hover,
+    .top-buttons .save:hover,
+    .li-container .select-pic:hover,
+    .li-container .arrow-group .up:not([disabled]):hover,
+    .li-container .arrow-group .down:not([disabled]):hover,
+    .li-container .arrow-group .delete:not([disabled]):hover {
         background-color: #ccc;
     }
 }
