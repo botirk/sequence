@@ -243,6 +243,7 @@ const createListItem = (listItem, listOwner) => {
         const i = listOwner.indexOf(listItem)
         if (i >= 0) listOwner.splice(i, 1)
         liContainer.remove()
+        updateArrows()
     }
     arrowGroup.appendChild(deleteBtn)
 
