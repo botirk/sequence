@@ -304,7 +304,7 @@ const saveList = async (list) => {
 
     const link = document.createElement('a')
     link.href = URL.createObjectURL(content)
-    link.download = "list.zip"
+    link.download = "sequence.zip"
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
