@@ -1,5 +1,6 @@
 // @ts-check
-import { getTranslation } from "./translate.js"
+import { getTranslation } from './translate.js'
+import './jszip.min.js'
 
 /**
  * @typedef {Object} ListItem
