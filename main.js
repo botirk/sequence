@@ -85,7 +85,15 @@ const createTopMenu = (list) => {
     saveButton.type = 'button'
     saveButton.className = 'save cursor-p'
     saveButton.title = getTranslation('saveFolder')
-    saveButton.onclick = () => saveList(list)
+    saveButton.onclick = async () => {
+        try {
+            saveList(list)
+        } catch (e) {
+            console.error(e)
+            alert(getTranslation('zipError'))
+        }
+        
+    }
     firstPart.appendChild(saveButton)
 
     const secondPart = document.createElement('div')
@@ -319,11 +327,11 @@ const createList = (list) => {
  * @param {List} list 
  */
 const saveList = async (list) => {
-    const filteredList = list.filter((li) => li.description.trim() || li.imgFile)
-    const listWithoutFiles = filteredList.map(li => ({ ...li, imgFile: (li.imgFile ? `${li.id}.${li.imgFile.name.split('.').pop()}` : undefined) }))
-
-    const enable = disableAll()
+    const enableAll = disableAll()
     try {
+        const filteredList = list.filter((li) => li.description.trim() || li.imgFile)
+        const listWithoutFiles = filteredList.map(li => ({ ...li, imgFile: (li.imgFile ? `${li.id}.${li.imgFile.name.split('.').pop()}` : undefined) }))
+
         const zip = new JSZip()
         zip.file('list.json', JSON.stringify(listWithoutFiles))
 
@@ -341,10 +349,8 @@ const saveList = async (list) => {
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(link.href)
-    } catch {
-        alert(getTranslation('zipError'))
     } finally {
-        enable()
+        enableAll()
     }
 }
 
