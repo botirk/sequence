@@ -21,6 +21,9 @@ const translationRu = {
     'deleteItem': 'Удалить предмет',
     fillDesc: 'Ввести описание',
     deletePic: 'Удалить картинку',
+    zipError: 'Ошибка при архивации',
+    notZip: 'Не архив',
+    unzipError: 'Ошибка при разархивации',
 }
 
 /**

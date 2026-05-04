@@ -63,8 +63,21 @@ const createTopMenu = (list) => {
     selectZipButton.id = 'select-zip'
     selectZipButton.type = 'file'
     selectZipButton.accept = '.zip, application/zip, application/x-zip-compressed'
-    selectZipButton.onchange = (e) => {
+    selectZipButton.onchange = async (e) => {
         if (!selectZipButton.files) return
+        const file = selectZipButton.files[0]
+        if (!file.name.endsWith('.zip')) {
+            alert(getTranslation('notZip'))
+            return
+        }
+        try {
+            renderMainMenu(await loadList(file))
+        } catch (e) {
+            console.error(e)
+            alert(getTranslation('unzipError'))
+        }
+         
+        
     }
     firstPart.appendChild(selectZipButton)
 
@@ -142,6 +155,12 @@ const createListItem = (listItem, listOwner) => {
         }
         switchPicUpload()
     }
+    if (listItem.imgFile) {
+        const imgEl = document.createElement('img')
+        imgEl.src = URL.createObjectURL(listItem.imgFile)
+        imgEl.draggable = false
+        labelSelectPicButton.appendChild(imgEl)
+    }
     liContainer.appendChild(selectPicButton)
 
     const switchPicUpload = () => {
@@ -159,6 +178,7 @@ const createListItem = (listItem, listOwner) => {
     }
 
     const textInput = document.createElement('input')
+    textInput.value = listItem.description
     textInput.size = 1
     textInput.className = 'text'
     textInput.title = getTranslation('fillDesc')
@@ -287,6 +307,10 @@ const createList = (list) => {
     const listContainer = document.createElement('div')
     listContainer.className = 'list-container'
 
+    for (const listItem of list) {
+        listContainer.appendChild(createListItem(listItem, list))
+    }
+
     return listContainer
 }
 
@@ -298,23 +322,84 @@ const saveList = async (list) => {
     const filteredList = list.filter((li) => li.description.trim() || li.imgFile)
     const listWithoutFiles = filteredList.map(li => ({ ...li, imgFile: (li.imgFile ? `${li.id}.${li.imgFile.name.split('.').pop()}` : undefined) }))
 
-    const zip = new JSZip()
-    zip.file('list.json', JSON.stringify(listWithoutFiles))
-    const content = await zip.generateAsync({type: 'blob'})
+    const enable = disableAll()
+    try {
+        const zip = new JSZip()
+        zip.file('list.json', JSON.stringify(listWithoutFiles))
 
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(content)
-    link.download = "sequence.zip"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(link.href)
+        for (const i in listWithoutFiles) {
+            if (listWithoutFiles[i].imgFile)
+                zip.file(listWithoutFiles[i].imgFile, filteredList[i].imgFile)
+        }
+
+        const content = await zip.generateAsync({type: 'blob'})
+
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(content)
+        link.download = "sequence.zip"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(link.href)
+    } catch {
+        alert(getTranslation('zipError'))
+    } finally {
+        enable()
+    }
 }
 
-const renderMainMenu = () => {
-    /** @type {List} */
-    const list = []
+/**
+ * 
+ * @param {File} zipFile
+ * @returns {Promise<List>}
+ */
+const loadList = async (zipFile) => {
+    const enableAll = disableAll()
+    
+    try {
+        const zip = new JSZip()
+        const files = Object.values((await zip.loadAsync(zipFile)).files)
+        const jsonFile = JSON.parse(await files.find(file => file.name === 'list.json').async('text'))
 
+        if (!(jsonFile instanceof Array)) throw new Error('JSON not array')
+
+        const result = []
+        for (const item of jsonFile) {
+            if (item.imgFile) {
+                if (typeof(item.imgFile) !== 'string') throw new Error('zipFile is not a string')
+                const jsZipFile = files.find(file => file.name === item.imgFile)
+                item.imgFile = await files.find(file => file.name === item.imgFile).async('blob')
+                item.imgFile.name = jsZipFile.name
+            }
+
+            if (typeof(item.id) !== 'number') throw new Error('id is not a number')
+            if (typeof(item.description) !== 'string') throw new Error('description is not a string')
+            if (typeof(item.descriptionPosition) !== 'string') throw new Error('descriptionPosition is not a string')
+            if (typeof(item.descriptionColor) !== 'string') throw new Error('descriptionColor is not a string')
+            result.push({ imgFile: item.imgFile, id: item.id, description: item.description, descriptionPosition: item.descriptionPosition, descriptionColor: item.descriptionColor })
+        }
+
+        return result
+    } finally {
+        enableAll()
+    }
+}
+
+const disableAll = () => {
+    const items = Array.from(document.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled])'))
+
+    for (const item of items) item.setAttribute('disabled', 'true')
+
+    return () => {
+        for (const item of items) item.removeAttribute('disabled')
+    }
+}
+
+/**
+ * 
+ * @param {List} list 
+ */
+const renderMainMenu = (list = []) => {
     container.textContent = ''
     container.append(createList(list))
     container.append(createTopMenu(list))
