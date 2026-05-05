@@ -25,16 +25,13 @@ const JSZip = /** @type {any} */ window.JSZip;
 const createFreshListItem = (list) => {
     const nextId = Math.max(...list.map(li => li.id), 0) + 1
 
-    const result = {
+    return  {
         description: '',
         descriptionPosition: 'end',
         descriptionColor: 'black',
         id: nextId,
         imgFile: undefined,
     }
-
-    list.push(result)
-    return result
 }
 
 /** @type {HTMLDivElement} */ // @ts-expect-error
@@ -56,7 +53,7 @@ const createTopMenu = (list) => {
     const labelSelectZipButton = document.createElement('label')
     labelSelectZipButton.className = 'cursor-p'
     labelSelectZipButton.htmlFor = 'select-zip'
-    labelSelectZipButton.title = getTranslation('selectFolder')
+    labelSelectZipButton.title = labelSelectZipButton.ariaLabel = getTranslation('selectFolder')
     firstPart.appendChild(labelSelectZipButton)
 
     const selectZipButton = document.createElement('input')
@@ -84,7 +81,7 @@ const createTopMenu = (list) => {
     const saveButton = document.createElement('button')
     saveButton.type = 'button'
     saveButton.className = 'save cursor-p'
-    saveButton.title = getTranslation('saveFolder')
+    saveButton.title = saveButton.ariaLabel = getTranslation('saveFolder')
     saveButton.onclick = async () => {
         try {
             saveList(list)
@@ -103,9 +100,10 @@ const createTopMenu = (list) => {
     const addButton = document.createElement('button')
     addButton.type = 'button'
     addButton.className = 'add cursor-p'
-    addButton.title = getTranslation('addItem')
+    addButton.title = addButton.ariaLabel = getTranslation('addItem')
     addButton.onclick = () => {
         const li = createFreshListItem(list)
+        list.push(li)
         const liEl = createListItem(li, list)
         document.querySelector('.list-container')?.append(liEl)
         updateArrows()
@@ -140,7 +138,7 @@ const createListItem = (listItem, listOwner) => {
     const labelSelectPicButton = document.createElement('label')
     labelSelectPicButton.className = 'select-pic cursor-p'
     labelSelectPicButton.htmlFor = `select-pic-${listItem.id}`
-    labelSelectPicButton.title = getTranslation('selectPic')
+    labelSelectPicButton.title = labelSelectPicButton.ariaLabel = getTranslation('selectPic')
     liContainer.appendChild(labelSelectPicButton)
 
     const selectPicButton = document.createElement('input')
@@ -172,7 +170,7 @@ const createListItem = (listItem, listOwner) => {
     liContainer.appendChild(selectPicButton)
 
     const switchPicUpload = () => {
-        labelSelectPicButton.title = getTranslation('deletePic')
+        labelSelectPicButton.title = labelSelectPicButton.ariaLabel = getTranslation('deletePic')
         selectPicButton.disabled = true
         labelSelectPicButton.onpointerup = (e) => {
             e.stopImmediatePropagation()
@@ -181,7 +179,7 @@ const createListItem = (listItem, listOwner) => {
             selectPos.disabled = true
             selectColor.disabled = true
             selectPicButton.disabled = false
-            labelSelectPicButton.title = getTranslation('selectPic')
+            labelSelectPicButton.title = labelSelectPicButton.ariaLabel = getTranslation('selectPic')
         }
     }
 
@@ -189,7 +187,7 @@ const createListItem = (listItem, listOwner) => {
     textInput.value = listItem.description
     textInput.size = 1
     textInput.className = 'text'
-    textInput.title = getTranslation('fillDesc')
+    textInput.title = textInput.ariaLabel = getTranslation('fillDesc')
     textInput.setAttribute('autocomplete', 'false')
     textInput.oninput = () => {
         listItem.description = textInput.value
@@ -208,7 +206,7 @@ const createListItem = (listItem, listOwner) => {
     liContainer.appendChild(selectGroup)
 
     const selectPos = document.createElement('select')
-    selectPos.title = getTranslation('selectTextPos')
+    selectPos.title = selectPos.ariaLabel = getTranslation('selectTextPos')
     selectPos.onchange = () => listItem.descriptionPosition = selectPos.value
     if (!listItem.description.trim().length || !listItem.imgFile) selectPos.disabled = true
     selectGroup.appendChild(selectPos)
@@ -231,8 +229,8 @@ const createListItem = (listItem, listOwner) => {
     }
 
     const selectColor = document.createElement('select')
-    selectColor.title = getTranslation('selectTextColor')
-    selectColor.onchange = () => listItem.descriptionColor = selectPos.value
+    selectColor.title = selectColor.ariaLabel = getTranslation('selectTextColor')
+    selectColor.onchange = () => listItem.descriptionColor = selectColor.value
     if (!listItem.description.trim().length || !listItem.imgFile) selectColor.disabled = true
     selectGroup.appendChild(selectColor)
     for (const color of ['black', 'white', 'red', 'green', 'yellow', 'blue']) {
@@ -251,7 +249,7 @@ const createListItem = (listItem, listOwner) => {
     const up = document.createElement('button')
     up.type = 'button'
     up.className = 'up'
-    up.title = getTranslation('moveUp')
+    up.title = up.ariaLabel = getTranslation('moveUp')
     up.onclick = () => {
         const parent = liContainer.parentElement
         if (!parent) return
@@ -270,7 +268,7 @@ const createListItem = (listItem, listOwner) => {
     const deleteBtn = document.createElement('button')
     deleteBtn.type = 'button'
     deleteBtn.className = 'delete'
-    deleteBtn.title = getTranslation('deleteItem')
+    deleteBtn.title = deleteBtn.ariaLabel = getTranslation('deleteItem')
     deleteBtn.onclick = () => {
         const i = listOwner.indexOf(listItem)
         if (i >= 0) listOwner.splice(i, 1)
@@ -279,11 +277,10 @@ const createListItem = (listItem, listOwner) => {
     }
     arrowGroup.appendChild(deleteBtn)
 
-
     const down = document.createElement('button')
     down.type = 'button'
     down.className = 'down'
-    down.title = getTranslation('moveDown')
+    down.title = down.ariaLabel = getTranslation('moveDown')
     down.onclick = () => {
         const parent = liContainer.parentElement
         if (!parent) return
