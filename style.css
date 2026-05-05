@@ -45,12 +45,14 @@ button:disabled, select:disabled {
 
 #container {
     height: 100%;
+}
 
+#container:not(.game) {
     display: grid;
     grid-template-rows: 1fr min-content;
 }
 
-.top-buttons {
+#container:not(.game) .top-buttons {
     height: calc(var(--list-item) * 0.66);
     border-top: calc(var(--space-sm) * 1.33) solid var(--main-color);
     padding-top: var(--space);
@@ -60,22 +62,22 @@ button:disabled, select:disabled {
     justify-content: space-between;
 }
 
-.top-buttons .first,
-.top-buttons .second {
+#container:not(.game) .top-buttons .first,
+#container:not(.game) .top-buttons .second {
     height: 100%;
 
     display: flex;
     gap: var(--space-sm);
 }
 
-input[type="file"] {
+#container:not(.game) input[type="file"] {
     display: none;
 }
 
-.top-buttons .add,
-.top-buttons .save,
-label[for="select-zip"],
-.li-container .select-pic {
+#container:not(.game) .top-buttons .add,
+#container:not(.game) .top-buttons .save,
+#container:not(.game) label[for="select-zip"],
+#container:not(.game) .li-container .select-pic {
     display: inline-block;
     height: 100%;
     aspect-ratio: 1 / 1;
@@ -85,19 +87,23 @@ label[for="select-zip"],
     border: var(--border-width) solid var(--main-color);
 }
 
-label[for="select-zip"] {
+#container:not(.game) label[for="select-zip"] {
     background-image: url(./assets/zip-file-icon.svg);
 }
 
-.top-buttons .add {
+#container:not(.game) .top-buttons .add {
     background-image: url(./assets/plus-icon.svg);
 }
 
-.top-buttons .save {
+#container:not(.game) .top-buttons .save {
     background-image: url(./assets/download-icon.svg);
 }
 
-.list-container {
+#container:not(.game) .top-buttons .select-game {
+    border: var(--border-width) solid var(--main-color)
+}
+
+#container:not(.game) .list-container {
     display: grid;
     grid-auto-rows: var(--list-item);
     gap: var(--space);
@@ -109,13 +115,14 @@ label[for="select-zip"] {
     overflow-y: auto;
 }
 
-.li-container {
+#container:not(.game) .li-container {
     display: grid;
     grid-template-columns: auto 10fr auto calc(var(--list-item) / 3.33);
     gap: var(--space);
 }
 
-.li-container .select-pic {
+#container:not(.game) .li-container .select-pic {
+    contain: size;
     height: 100%;
 
     display: flex;
@@ -123,42 +130,42 @@ label[for="select-zip"] {
     align-items: center;
 }
 
-.li-container .select-pic:not(:has(img)) {
+#container:not(.game) .li-container .select-pic:not(:has(img)) {
     background-image: url(./assets/image-file-icon.svg);
 }
 
-.li-container .select-pic img {
+#container:not(.game) .li-container .select-pic img {
     width: 100%;
     max-height: 100%;
 }
 
-.li-container .text {
+#container:not(.game) .li-container .text {
     border: var(--border-width) solid var(--main-color);
     border-color: var(--main-color);
     font-size: inherit;
     padding: var(--space);
 }
 
-.li-container .select-group {
+#container:not(.game) .li-container .select-group {
     display: grid;
     gap: var(--space-sm);
     grid-template-rows: 1fr 1fr;
 }
 
-.li-container .select-group select {
+#container:not(.game) .li-container .select-group select {
     font-size: inherit;
 }
 
-.li-container .arrow-group {
+#container:not(.game) .li-container .arrow-group {
     display: grid;
     gap: var(--border-width);
     align-content: space-between;
     grid-template-rows: 1fr 1fr 1fr;
 }
 
-.li-container .arrow-group .up,
-.li-container .arrow-group .down,
-.li-container .arrow-group .delete {
+#container:not(.game) .li-container .arrow-group .up,
+#container:not(.game) .li-container .arrow-group .down,
+#container:not(.game) .li-container .arrow-group .delete {
     aspect-ratio: 1 / 1;
     background-repeat: no-repeat;
     background-size: 70% 70%;
@@ -166,30 +173,30 @@ label[for="select-zip"] {
     border: var(--border-width) solid var(--main-color);
 }
 
-.li-container .arrow-group .up {
+#container:not(.game) .li-container .arrow-group .up {
     background-image: url(./assets/arrow-top-icon.svg);
     align-self: start;
 }
 
-.li-container .arrow-group .down {
+#container:not(.game) .li-container .arrow-group .down {
     background-image: url(./assets/arrow-bottom-icon.svg);
     align-self: end;
 }
 
-.li-container .arrow-group .delete {
+#container:not(.game) .li-container .arrow-group .delete {
     background-image: url(./assets/recycle-bin-line-icon.svg);
     align-self: center;
 
 }
 
 @media (hover: hover) {
-    label[for="select-zip"]:hover,
-    .top-buttons .add:hover,
-    .top-buttons .save:hover,
-    .li-container .select-pic:hover,
-    .li-container .arrow-group .up:not([disabled]):hover,
-    .li-container .arrow-group .down:not([disabled]):hover,
-    .li-container .arrow-group .delete:not([disabled]):hover {
+    #container:not(.game) label[for="select-zip"]:hover,
+    #container:not(.game) .top-buttons .add:hover,
+    #container:not(.game) .top-buttons .save:hover,
+    #container:not(.game) .li-container .select-pic:hover,
+    #container:not(.game) .li-container .arrow-group .up:not([disabled]):hover,
+    #container:not(.game) .li-container .arrow-group .down:not([disabled]):hover,
+    #container:not(.game) .li-container .arrow-group .delete:not([disabled]):hover {
         background-color: var(--main-color);
     }
 }
@@ -200,16 +207,16 @@ label[for="select-zip"] {
         font-size: var(--fs-mobile);
     }
 
-    .top-buttons {
+    #container:not(.game) .top-buttons {
         padding-top: var(--space-sm);
         border-top-width: var(--border-width);
     }
 
-    .list-container {
+    #container:not(.game) .list-container {
         padding-bottom: var(--space-sm);
     }
 
-    .li-container {
+    #container:not(.game) .li-container {
         gap: var(--space-sm);
         grid-template-columns: auto 1fr calc(var(--list-item) / 3.33);
         grid-template-rows: 1fr 1fr;
@@ -218,25 +225,25 @@ label[for="select-zip"] {
         border-bottom: var(--border-width) solid var(--main-color);
     }
 
-    .li-container .select-pic {
+    #container:not(.game) .li-container .select-pic {
         grid-row: 1 / 3;
         grid-column: 1;
         align-self: center;
     }
 
-    .li-container .text {
+    #container:not(.game) .li-container .text {
         padding: var(--space-sm);
 
         grid-row: 1;
         grid-column: 2;
     }
 
-    .li-container .select-group {
+    #container:not(.game) .li-container .select-group {
         grid-row: 2;
         grid-column: 2;
     }
 
-    .li-container .arrow-group {
+    #container:not(.game) .li-container .arrow-group {
         grid-row: 1 / 3;
         grid-column: 3;
     }

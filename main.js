@@ -1,22 +1,12 @@
 // @ts-check
 import './assets/jszip.min.js'
 import { getTranslation } from './translate.js'
+import { renderGame as renderSortGame } from './gameSort.js'
 
 // @ts-expect-error
-const JSZip = /** @type {any} */ window.JSZip;
+const JSZip = window.JSZip
 
-/**
- * @typedef {Object} ListItem
- * @prop {number} id
- * @prop {File|void} imgFile
- * @prop {string} description
- * @prop {'start'|'center'|'end'|string} descriptionPosition
- * @prop {'black'|'white'|'red'|'blue'|'green'|string} descriptionColor
- */
 
-/**
- * @typedef {ListItem[]} List
- */
 
 /**
  * @param {List} list
@@ -68,7 +58,10 @@ const createTopMenu = (list) => {
             return
         }
         try {
-            renderMainMenu(await loadList(file))
+            const list = await loadList(file)
+            const params = new URLSearchParams(window.location.search)
+            if (params.has('sortGame')) renderSortGame(list)
+            else renderMainMenu(list)
         } catch (e) {
             console.error(e)
             alert(getTranslation('unzipError'))
@@ -96,6 +89,26 @@ const createTopMenu = (list) => {
     const secondPart = document.createElement('div')
     secondPart.className = 'second'
     topButtons.append(secondPart)
+
+    const selectGame = document.createElement('select')
+    selectGame.className = 'select-game'
+    selectGame.onchange = () => {
+        switch (selectGame.value) {
+            case 'sortGame': 
+                renderSortGame(list)
+                break
+        }
+    }
+    secondPart.appendChild(selectGame)
+
+    const empty = document.createElement('option')
+    empty.selected = true
+    selectGame.appendChild(empty)
+
+    const sortGame = document.createElement('option')
+    sortGame.value = 'sortGame'
+    sortGame.text = getTranslation('sortGame')
+    selectGame.appendChild(sortGame)
 
     const addButton = document.createElement('button')
     addButton.type = 'button'
@@ -402,10 +415,23 @@ const disableAll = () => {
  * 
  * @param {List} list 
  */
-const renderMainMenu = (list = []) => {
+export const renderMainMenu = (list = []) => {
     container.textContent = ''
     container.append(createList(list))
     container.append(createTopMenu(list))
+}
+
+/**
+ * @template T
+ * @param {T[]} array 
+ * @returns {T[]}
+ */
+export const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
 
 renderMainMenu()
