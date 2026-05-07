@@ -81,18 +81,15 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
 
 /**
  * 
- * @param {{ listItem: ListItem, disabled: boolean, first: boolean, last: boolean, onMove: (li: ListItem, change: number) => void, onDelete: (li: ListItem) => void }} param0
+ * @param {{ listItem: ListItem, disabled: boolean, first: boolean, last: boolean, onMove: (li: ListItem, change: number) => void, onDelete: (li: ListItem) => void, onUpdate: (newLi: ListItem) => void }} param0
  */
-const ListItem = ({ listItem, disabled, first, last, onMove, onDelete }) => {
+const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate }) => {
     // @ts-expect-error ts bug
-    const onSelectTextPos = useCallback((e) => listItem.descriptionPosition = e.target.value)
+    const onSelectTextPos = useCallback((e) => onUpdate({ ...listItem, descriptionPosition: e.target.value }), [listItem, onUpdate])
     // @ts-expect-error ts bug
-    const onSelectTextColor = useCallback((e) => listItem.descriptionColor = e.target.value)
-
-    const [desc, setDesc] = useState(listItem.description)
-    listItem.description = desc
+    const onSelectTextColor = useCallback((e) => onUpdate({ ...listItem, descriptionColor: e.target.value }), [listItem, onUpdate])
     // @ts-expect-error ts bug
-    const onDescInput = useCallback((e) => setDesc(e.target.value))
+    const onDescInput = useCallback((e) => onUpdate({ ...listItem, description: e.target.value }), [listItem, onUpdate])
 
     const [imgSrc, setImgSrc] = useState(listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined)
     useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) }, [imgSrc])
@@ -101,31 +98,31 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete }) => {
         if (!e.target.files) return
         const img = e.target.files[0]
         if (!img) return
-        listItem.imgFile = img
+        onUpdate({ ...listItem, imgFile: img })
         if (imgSrc) URL.revokeObjectURL(imgSrc)
         setImgSrc(URL.createObjectURL(img))
-    })
+    }, [imgSrc, listItem, onUpdate])
     // @ts-expect-error ts bug
     const labelOnpointerup = useCallback((e) => {
         e.stopImmediatePropagation()
-        listItem.imgFile = undefined
+        onUpdate({ ...listItem, imgFile: undefined })
         if (imgSrc) URL.revokeObjectURL(imgSrc)
         setImgSrc(undefined)
-    })
+    }, [listItem, onUpdate, imgSrc])
 
-    const moveUp = useCallback(() => onMove(listItem, -1))
-    const onMyDelete = useCallback(() => onDelete(listItem))
-    const moveDown = useCallback(() => onMove(listItem, 1))
+    const moveUp = useCallback(() => onMove(listItem, -1), [listItem, onMove])
+    const onMyDelete = useCallback(() => onDelete(listItem), [listItem, onDelete])
+    const moveDown = useCallback(() => onMove(listItem, 1), [listItem, onMove])
 
-    const disabledSelect = (!desc || !imgSrc)
+    const disabledSelect = (!listItem.description || !listItem.imgFile)
 
     return html`
         <div class="li-container">
-            <label class="select-pic cursor-p" onpointerup=${labelOnpointerup} for="select-pic-1" aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
+            <label class="select-pic cursor-p" onpointerup=${labelOnpointerup} for=${`select-pic-${listItem.id}`} aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
                 ${imgSrc ? html`<img src=${imgSrc} draggable="false" />` : null}
             </label>
-            <input id="select-pic-1" onchange=${onSelectPic} type="file" accept=".jpg, .jpeg, .png, image/jpeg, image/png" />
-            <input size="1" class="text" value=${desc} oninput=${onDescInput} aria-label=${getTranslation('fillDesc')} title=${getTranslation('fillDesc')} autocomplete="false" disabled=${disabled}/>
+            <input id=${`select-pic-${listItem.id}`} onchange=${onSelectPic} type="file" accept=".jpg, .jpeg, .png, image/jpeg, image/png" />
+            <input size="1" class="text" value=${listItem.description} oninput=${onDescInput} aria-label=${getTranslation('fillDesc')} title=${getTranslation('fillDesc')} autocomplete="false" disabled=${disabled}/>
             <div class="select-group">
                 <select value=${listItem.descriptionPosition} onchange=${onSelectTextPos} aria-label=${getTranslation('selectTextPos')} title=${getTranslation('selectTextPos')} disabled=${disabled || disabledSelect}>
                     <option value="start">${getTranslation('start')}</option>
@@ -152,12 +149,12 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete }) => {
 
 /**
  * 
- * @param {{ list: List, disabled: boolean, onMove: (li: ListItem, change: number) => void, onDelete: (li: ListItem) => void }} param0
+ * @param {{ list: List, disabled: boolean, onMove: (li: ListItem, change: number) => void, onDelete: (li: ListItem) => void, onUpdate: (newLi: ListItem) => void }} param0
  */
-const List = ({ list, disabled, onMove, onDelete }) => {
+const List = ({ list, disabled, onMove, onDelete, onUpdate }) => {
     return html`
         <div class="list-container">
-            ${list.map(li => html`<${ListItem} key=${li.id} listItem=${li} disabled=${disabled} first=${list[0] === li} last=${list[list.length - 1] === li} onMove=${onMove} onDelete=${onDelete} />`)}
+            ${list.map(li => html`<${ListItem} key=${li.id} listItem=${li} disabled=${disabled} first=${list[0] === li} last=${list[list.length - 1] === li} onMove=${onMove} onDelete=${onDelete} onUpdate=${onUpdate} />`)}
         </div>
     `
 }
@@ -170,37 +167,50 @@ const MainMenu = ({ initialList }) => {
     const [list, setList] = useState(initialList)
     const [disabled, setDisabled] = useState(false)
 
-    // @ts-expect-error
+    // @ts-expect-error anonymous function
     const onMove = useCallback((li, change) => {
         const i = list.indexOf(li)
         if (i < 0) return
         if (change < 0 && i > 0) {
-            list.splice(i, 1)
-            list.splice(i - 1, 0, li)
-            setList([...list])
+            const newList = [...list]
+            newList.splice(i, 1)
+            newList.splice(i - 1, 0, li)
+            setList(newList)
         } else if (change > 0 && i < list.length - 1) {
-            list.splice(i, 1)
-            list.splice(i + 1, 0, li)
-            setList([...list])
+            const newList = [...list]
+            newList.splice(i, 1)
+            newList.splice(i + 1, 0, li)
+            setList(newList)
         }
-    })
+    }, [list])
 
     const onAddList = useCallback(() => {
         setList([...list, newListItem(list)])
         setTimeout(() => document.querySelector('.list-container')?.lastElementChild?.scrollIntoView({ behavior: 'smooth' }), 50)
-        
-    })
+    }, [list])
 
-    // @ts-expect-error
+    // @ts-expect-error anonymous function
     const onDelete = useCallback((li) => {
+        console.log('da')
         const i = list.indexOf(li)
         if (i < 0) return
-        list.splice(i, 1)
-        setList([...list])    
-    })
+        const newList = [...list]
+        newList.splice(i, 1)
+        setList(newList)    
+    }, [list])
+
+    // @ts-expect-error anonymous function
+    const onUpdate = useCallback((li) => {
+        // @ts-expect-error anonymous function
+        const i = list.findIndex((candidate) => li.id === candidate.id)
+        if (i < 0) return
+        const newList = [...list]
+        newList.splice(i, 1, li)
+        setList(newList)
+    }, [list])
     
     return html`
-        <${List} list=${list} disabled=${disabled} onMove=${onMove} onDelete=${onDelete} /> 
+        <${List} list=${list} disabled=${disabled} onMove=${onMove} onDelete=${onDelete} onUpdate=${onUpdate} /> 
         <${TopMenu} setDisabled=${setDisabled} disabled=${disabled} onAddListItem=${onAddList} list=${list} />
     `
 }
