@@ -129,7 +129,7 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate 
                     <option value="center">${getTranslation('center')}</option>
                     <option value="end">${getTranslation('end')}</option>
                 </select>
-                <select value=${listItem.descriptionColor} onchage=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || disabledSelect}>
+                <select value=${listItem.descriptionColor} onchange=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || disabledSelect}>
                     <option value="black">${getTranslation('black')}</option>
                     <option value="white">${getTranslation('white')}</option>
                     <option value="red">${getTranslation('red')}</option>
