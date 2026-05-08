@@ -1,0 +1,49 @@
+// @ts-check
+
+import { html, useEffect, useState } from "./assets/preact.mjs";
+
+/**
+ * @template T
+ * @param {T[]} array 
+ * @returns {T[]}
+ */
+export const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+/**
+ * 
+ * @param {List} list1
+ * @param {List} list2
+ * @param {number|void} i
+ * @returns {boolean}
+ */
+export const isListCorrect = (list1, list2, i = undefined) => {
+  if (i !== undefined) return list1[i]?.id === list2[i]?.id
+  else return list1.length === list2.length && list1.every((_, i) => isListCorrect(list1, list2, i))
+}
+
+/**
+ * 
+ * @param {{ listItem: ListItem }} param0 
+ * @returns 
+ */
+export const ListItemLib = ({ listItem }) => {
+  const imgSrc = listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined
+  useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) })
+
+  console.log(imgSrc)
+
+  return html`
+    <div class="list-item-lib">
+      ${imgSrc ? html`<img src=${imgSrc} alt=${listItem.description} />` : null}
+      <div class="text-container">
+        ${listItem.description ? html`<div class="text" style=${{ color: listItem.descriptionColor, '--color': listItem.descriptionColor, alignSelf: listItem.descriptionPosition }}>${listItem.description}</div>` : null}
+      </div>
+    </div>
+  `
+}

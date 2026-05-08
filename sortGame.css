@@ -1,0 +1,26 @@
+:root {
+    --list-item: min(80vw, 50vh)
+}
+
+.sort-game {
+    display: grid;
+    gap: var(--space);
+    grid-template-columns: min-content 40px;
+    grid-auto-rows: 1fr;
+}
+
+.list-item-lib {
+    justify-self: start;
+}
+
+.list-item-lib img {
+    display: block;
+    height: var(--list-item);    
+}
+
+.arrows {
+    display: flex;
+    gap: var(--space-sm);
+    flex-direction: column;
+    justify-content: center;
+}

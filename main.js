@@ -3,7 +3,7 @@ import './assets/jszip.min.js'
 import { render, html, useState, useCallback, useEffect } from './assets/preact.mjs'
 
 import { getTranslation } from './translate.js'
-import { renderGame as renderSortGame } from './gameSort.js'
+import { renderGame as renderSortGame } from './sortGame.js'
 
 // @ts-expect-error
 const JSZip = window.JSZip
@@ -16,13 +16,21 @@ export const container = document.getElementById('container')
  * @param {{ onAddListItem: () => void, list: List, setDisabled: (state: boolean) => void, disabled: boolean }} param0 
  */
 const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
+    // @ts-expect-error anonymous function
+    const onGameSelected = useCallback((e) => {
+        switch (e.target.value) {
+            case 'sortGame':
+                switchStyles(false)
+                renderSortGame(list, false)
+                break
+            case 'sortGameEasy':
+                switchStyles(false)
+                renderSortGame(list, true)
+                break
+        }
+    }, [list])
 
-    /** @param {Event} e */
-    const onGameSelected = (e) => {
-
-    }
-
-    const onSave = async () => {
+    const onSave = useCallback(async () => {
         try {
             setDisabled(true)
             await saveList(list)
@@ -32,15 +40,14 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
         } finally {
             setDisabled(false)
         }
-        
-    }
+    }, [list])
 
-    /** @param {InputEvent} e */
-    const inputFiles = async (e) => {
+    // @ts-expect-error anonymous function
+    const inputFiles = useCallback(async (e) => {
         try {
             setDisabled(true)
 
-            /** @type {FileList|void} */ // @ts-expect-error target
+            /** @type {FileList|void} */
             const files = e.target.files
             if (!files) return
             const file = files[0]
@@ -51,29 +58,35 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
 
             const list = await loadList(file)
             const params = new URLSearchParams(window.location.search)
-            if (params.has('sortGame')) renderSortGame(list)
-            else renderMainMenu(list)
+            if (params.has('sortGame')) {
+                switchStyles(false)
+                renderSortGame(list, false)
+            } else if (params.has('sortGameEasy')) {
+                switchStyles(false)
+                renderSortGame(list, true)
+            } else renderMainMenu(list)
         } catch (e) {
             console.error(e)
             alert(getTranslation('unzipError'))
         } finally {
             setDisabled(false)
         }
-    }
+    })
 
     return html`
         <div class="top-buttons">
             <div class="first">
-                <label class="cursor-p" for="select-zip" aria-label=${getTranslation('selectFolder')} title=${getTranslation('selectFolder')}></label>
+                <label class="cursor-p grey-hover" for="select-zip" aria-label=${getTranslation('selectFolder')} title=${getTranslation('selectFolder')}></label>
                 <input disabled=${disabled} id="select-zip" oninput=${inputFiles} type="file" accept=".zip, application/zip, application/x-zip-compressed" />
-                <button disabled=${disabled} onclick=${onSave} type="button" class="save cursor-p" aria-label=${getTranslation('saveFolder')} title=${getTranslation('saveFolder')}></button>
+                <button disabled=${disabled} onclick=${onSave} type="button" class="save cursor-p grey-hover" aria-label=${getTranslation('saveFolder')} title=${getTranslation('saveFolder')}></button>
             </div>
             <div class="second">
                 <select onchange=${onGameSelected} class="select-game" disabled=${disabled}>
                     <option></option>
                     <option value="sortGame">${getTranslation('sortGame')}</option>
+                    <option value="sortGameEasy">${getTranslation('sortGameEasy')}</option>
                 </select>
-                <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add cursor-p" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
+                <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add cursor-p grey-hover" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
             </div>
         </div>
     `
@@ -118,7 +131,7 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate 
 
     return html`
         <div class="li-container">
-            <label class="select-pic cursor-p" onpointerup=${labelOnpointerup} for=${`select-pic-${listItem.id}`} aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
+            <label class="select-pic cursor-p grey-hover" onpointerup=${labelOnpointerup} for=${`select-pic-${listItem.id}`} aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
                 ${imgSrc ? html`<img src=${imgSrc} draggable="false" />` : null}
             </label>
             <input id=${`select-pic-${listItem.id}`} onchange=${onSelectPic} type="file" accept=".jpg, .jpeg, .png, image/jpeg, image/png" />
@@ -139,9 +152,9 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate 
                 </select>
             </div>
             <div class="arrow-group">
-                <button type="button" class="up" onclick=${moveUp} aria-label=${getTranslation('moveUp')} title=${getTranslation('moveUp')} disabled=${first || disabled}></button>
-                <button type="button" class="delete" onclick=${onMyDelete} aria-label=${getTranslation('deleteItem')} title=${getTranslation('deleteItem')} disabled=${disabled}></button>
-                <button type="button" class="down" onclick=${moveDown} aria-label=${getTranslation('moveDown')} title=${getTranslation('moveDown')} disabled=${last || disabled}></button>
+                <button type="button" class="icon up cursor-p grey-hover" onclick=${moveUp} aria-label=${getTranslation('moveUp')} title=${getTranslation('moveUp')} disabled=${first || disabled}></button>
+                <button type="button" class="icon delete cursor-p grey-hover" onclick=${onMyDelete} aria-label=${getTranslation('deleteItem')} title=${getTranslation('deleteItem')} disabled=${disabled}></button>
+                <button type="button" class="icon down cursor-p grey-hover" onclick=${moveDown} aria-label=${getTranslation('moveDown')} title=${getTranslation('moveDown')} disabled=${last || disabled}></button>
             </div>
         </div>
     `
@@ -191,7 +204,6 @@ const MainMenu = ({ initialList }) => {
 
     // @ts-expect-error anonymous function
     const onDelete = useCallback((li) => {
-        console.log('da')
         const i = list.indexOf(li)
         if (i < 0) return
         const newList = [...list]
@@ -260,7 +272,7 @@ const saveList = async (list) => {
 
 /**
  * 
- * @param {File} zipFile
+ * @param {File|Blob} zipFile
  * @returns {Promise<List>}
  */
 const loadList = async (zipFile) => {
@@ -289,17 +301,23 @@ const loadList = async (zipFile) => {
     return result
 }
 
-/**
- * @template T
- * @param {T[]} array 
- * @returns {T[]}
- */
-export const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
+const loadListFromUrl = async (url = '') => {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(res.statusText)
+    const file = await res.blob()
+    return await loadList(file)
+}
+
+const switchStyles = (state = true) => {
+    const link = document.head.querySelector('link[href="menu.css"]')
+    if (state && !link) {
+        const link = document.createElement('link')
+        link.href = 'menu.css'
+        link.rel = 'stylesheet'
+        document.head.appendChild(link)
+    } else if (!state && link) {
+        link.remove()
+    }
 }
 
 /**
@@ -308,7 +326,9 @@ export const shuffleArray = (array) => {
  */
 export const renderMainMenu = (list = []) => {
     render(null, container)
+    switchStyles(true)
     render(html`<${MainMenu} initialList=${list} />`, container)
 }
 
-renderMainMenu()
+//renderMainMenu()
+await renderSortGame(await loadListFromUrl('assets/sequence.zip'), true)

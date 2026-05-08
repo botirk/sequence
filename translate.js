@@ -24,7 +24,8 @@ const translationRu = {
     zipError: 'Ошибка при архивации',
     notZip: 'Не архив',
     unzipError: 'Ошибка при разархивации',
-    sortGame: 'Сортировка'
+    sortGame: 'Сортировка',
+    sortGameEasy: 'Сортировка(лёкгий)'
 }
 
 /**
