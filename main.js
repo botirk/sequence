@@ -16,8 +16,12 @@ export const container = document.getElementById('container')
  * @param {{ onAddListItem: () => void, list: List, setDisabled: (state: boolean) => void, disabled: boolean }} param0 
  */
 const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
-    // @ts-expect-error anonymous function
-    const onGameSelected = useCallback((e) => {
+    /**
+     * 
+     * @param {Event} e 
+     */
+    const onGameSelected = (e) => {
+        // @ts-expect-error target always exists
         switch (e.target.value) {
             case 'sortGame':
                 switchStyles(false)
@@ -28,9 +32,9 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
                 renderSortGame(list, true)
                 break
         }
-    }, [list])
+    }
 
-    const onSave = useCallback(async () => {
+    const onSave = async () => {
         try {
             setDisabled(true)
             await saveList(list)
@@ -40,14 +44,16 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
         } finally {
             setDisabled(false)
         }
-    }, [list])
+    }
 
-    // @ts-expect-error anonymous function
-    const inputFiles = useCallback(async (e) => {
+    /**
+     * @param {InputEvent} e 
+     */
+    const inputFiles = async (e) => {
         try {
             setDisabled(true)
 
-            /** @type {FileList|void} */
+            /** @type {FileList|void} */ // @ts-expect-error target exists always
             const files = e.target.files
             if (!files) return
             const file = files[0]
@@ -71,22 +77,22 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
         } finally {
             setDisabled(false)
         }
-    })
+    }
 
     return html`
         <div class="top-buttons">
             <div class="first">
-                <label class="cursor-p grey-hover" for="select-zip" aria-label=${getTranslation('selectFolder')} title=${getTranslation('selectFolder')}></label>
+                <label class="cursor-p icon grey-hover" for="select-zip" aria-label=${getTranslation('selectFolder')} title=${getTranslation('selectFolder')}></label>
                 <input disabled=${disabled} id="select-zip" oninput=${inputFiles} type="file" accept=".zip, application/zip, application/x-zip-compressed" />
-                <button disabled=${disabled} onclick=${onSave} type="button" class="save cursor-p grey-hover" aria-label=${getTranslation('saveFolder')} title=${getTranslation('saveFolder')}></button>
+                <button disabled=${disabled} onclick=${onSave} type="button" class="save icon grey-hover" aria-label=${getTranslation('saveFolder')} title=${getTranslation('saveFolder')}></button>
             </div>
             <div class="second">
-                <select onchange=${onGameSelected} class="select-game" disabled=${disabled}>
+                <select onchange=${onGameSelected} class="interactive" disabled=${disabled}>
                     <option></option>
                     <option value="sortGame">${getTranslation('sortGame')}</option>
                     <option value="sortGameEasy">${getTranslation('sortGameEasy')}</option>
                 </select>
-                <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add cursor-p grey-hover" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
+                <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add icon grey-hover" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
             </div>
         </div>
     `
@@ -97,52 +103,54 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
  * @param {{ listItem: ListItem, disabled: boolean, first: boolean, last: boolean, onMove: (li: ListItem, change: number) => void, onDelete: (li: ListItem) => void, onUpdate: (newLi: ListItem) => void }} param0
  */
 const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate }) => {
-    // @ts-expect-error ts bug
-    const onSelectTextPos = useCallback((e) => onUpdate({ ...listItem, descriptionPosition: e.target.value }), [listItem, onUpdate])
-    // @ts-expect-error ts bug
-    const onSelectTextColor = useCallback((e) => onUpdate({ ...listItem, descriptionColor: e.target.value }), [listItem, onUpdate])
-    // @ts-expect-error ts bug
-    const onDescInput = useCallback((e) => onUpdate({ ...listItem, description: e.target.value }), [listItem, onUpdate])
+    /** @param {Event} e */ // @ts-expect-error target.value always exists
+    const onSelectTextPos = (e) => onUpdate({ ...listItem, descriptionPosition: e.target.value })
+    
+    /** @param {Event} e */ // @ts-expect-error target.value always exists
+    const onSelectTextColor = (e) => onUpdate({ ...listItem, descriptionColor: e.target.value })
+    
+    /** @param {InputEvent} e */ // @ts-expect-error target.value always exists
+    const onDescInput = (e) => onUpdate({ ...listItem, description: e.target.value })
 
     const [imgSrc, setImgSrc] = useState(listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined)
     useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) }, [imgSrc])
-    // @ts-expect-error ts bug
-    const onSelectPic = useCallback((e) => {
-        if (!e.target.files) return
-        const img = e.target.files[0]
+    
+    /** @param {InputEvent} e */
+    const onSelectPic = (e) => {
+        // @ts-expect-error target & files always exist
+        const img = e.target?.files?.[0]
         if (!img) return
         onUpdate({ ...listItem, imgFile: img })
         if (imgSrc) URL.revokeObjectURL(imgSrc)
         setImgSrc(URL.createObjectURL(img))
-    }, [imgSrc, listItem, onUpdate])
-    // @ts-expect-error ts bug
-    const labelOnpointerup = useCallback((e) => {
+    }
+    
+    /** @param {Event} e */
+    const labelOnpointerup = (e) => {
         e.stopImmediatePropagation()
         onUpdate({ ...listItem, imgFile: undefined })
         if (imgSrc) URL.revokeObjectURL(imgSrc)
         setImgSrc(undefined)
-    }, [listItem, onUpdate, imgSrc])
+    }
 
-    const moveUp = useCallback(() => onMove(listItem, -1), [listItem, onMove])
-    const onMyDelete = useCallback(() => onDelete(listItem), [listItem, onDelete])
-    const moveDown = useCallback(() => onMove(listItem, 1), [listItem, onMove])
-
-    const disabledSelect = (!listItem.description || !listItem.imgFile)
+    const moveUp = () => onMove(listItem, -1)
+    const onMyDelete = () => onDelete(listItem)
+    const moveDown = () => onMove(listItem, 1)
 
     return html`
         <div class="li-container">
-            <label class="select-pic cursor-p grey-hover" onpointerup=${labelOnpointerup} for=${`select-pic-${listItem.id}`} aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
+            <label class="select-pic cursor-p grey-hover icon" onpointerup=${labelOnpointerup} for=${`select-pic-${listItem.id}`} aria-label=${getTranslation('selectPic')} title=${getTranslation('selectPic')}>
                 ${imgSrc ? html`<img src=${imgSrc} draggable="false" />` : null}
             </label>
             <input id=${`select-pic-${listItem.id}`} onchange=${onSelectPic} type="file" accept=".jpg, .jpeg, .png, image/jpeg, image/png" />
-            <input size="1" class="text" value=${listItem.description} oninput=${onDescInput} aria-label=${getTranslation('fillDesc')} title=${getTranslation('fillDesc')} autocomplete="false" disabled=${disabled}/>
+            <input size="1" class="text interactive" value=${listItem.description} oninput=${onDescInput} aria-label=${getTranslation('fillDesc')} title=${getTranslation('fillDesc')} autocomplete="false" disabled=${disabled}/>
             <div class="select-group">
-                <select value=${listItem.descriptionPosition} onchange=${onSelectTextPos} aria-label=${getTranslation('selectTextPos')} title=${getTranslation('selectTextPos')} disabled=${disabled || disabledSelect}>
+                <select value=${listItem.descriptionPosition} onchange=${onSelectTextPos} aria-label=${getTranslation('selectTextPos')} title=${getTranslation('selectTextPos')} disabled=${disabled || !listItem.description}>
                     <option value="start">${getTranslation('start')}</option>
                     <option value="center">${getTranslation('center')}</option>
                     <option value="end">${getTranslation('end')}</option>
                 </select>
-                <select value=${listItem.descriptionColor} onchange=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || disabledSelect}>
+                <select value=${listItem.descriptionColor} onchange=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || !listItem.description}>
                     <option value="black">${getTranslation('black')}</option>
                     <option value="white">${getTranslation('white')}</option>
                     <option value="red">${getTranslation('red')}</option>
@@ -152,9 +160,9 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate 
                 </select>
             </div>
             <div class="arrow-group">
-                <button type="button" class="icon up cursor-p grey-hover" onclick=${moveUp} aria-label=${getTranslation('moveUp')} title=${getTranslation('moveUp')} disabled=${first || disabled}></button>
-                <button type="button" class="icon delete cursor-p grey-hover" onclick=${onMyDelete} aria-label=${getTranslation('deleteItem')} title=${getTranslation('deleteItem')} disabled=${disabled}></button>
-                <button type="button" class="icon down cursor-p grey-hover" onclick=${moveDown} aria-label=${getTranslation('moveDown')} title=${getTranslation('moveDown')} disabled=${last || disabled}></button>
+                <button type="button" class="icon up grey-hover" onclick=${moveUp} aria-label=${getTranslation('moveUp')} title=${getTranslation('moveUp')} disabled=${first || disabled}></button>
+                <button type="button" class="icon delete grey-hover" onclick=${onMyDelete} aria-label=${getTranslation('deleteItem')} title=${getTranslation('deleteItem')} disabled=${disabled}></button>
+                <button type="button" class="icon down grey-hover" onclick=${moveDown} aria-label=${getTranslation('moveDown')} title=${getTranslation('moveDown')} disabled=${last || disabled}></button>
             </div>
         </div>
     `
@@ -309,10 +317,10 @@ const loadListFromUrl = async (url = '') => {
 }
 
 const switchStyles = (state = true) => {
-    const link = document.head.querySelector('link[href="menu.css"]')
+    const link = document.head.querySelector('link[href="main.css"]')
     if (state && !link) {
         const link = document.createElement('link')
-        link.href = 'menu.css'
+        link.href = 'main.css'
         link.rel = 'stylesheet'
         document.head.appendChild(link)
     } else if (!state && link) {
@@ -330,5 +338,5 @@ export const renderMainMenu = (list = []) => {
     render(html`<${MainMenu} initialList=${list} />`, container)
 }
 
-//renderMainMenu()
-await renderSortGame(await loadListFromUrl('assets/sequence.zip'), true)
+renderMainMenu()
+//await renderSortGame(await loadListFromUrl('assets/sequence.zip'), true)

@@ -1,8 +1,9 @@
 // @ts-check
-import { render, html, useState, useCallback, useEffect } from './assets/preact.mjs'
+import { render, html, useState, useCallback } from './assets/preact.mjs'
 
 import { shuffleArray, isListCorrect, ListItemLib } from './lib.js'
 import { renderMainMenu } from './main.js'
+import { getTranslation } from './translate.js'
 
 
 /** @type {HTMLDivElement} */ // @ts-expect-error exists
@@ -10,14 +11,14 @@ const container = document.getElementById('container')
 
 /**
  * 
- * @param {{ listItem: ListItem, showAnswer: boolean, easy: boolean, isCorrect: boolean }} param0
+ * @param {{ listItem: ListItem, showAnswer: boolean, easy: boolean, isCorrect: boolean, onMove: (li: ListItem, change: number) => void, last: boolean, first: boolean }} param0
  */
-const ListItem = ({ listItem, showAnswer, easy, isCorrect }) => {
+const ListItem = ({ listItem, showAnswer, easy, isCorrect, onMove, first, last }) => { 
     return html`
-        <${ListItemLib} listItem=${listItem} />
+        <${ListItemLib} listItem=${listItem} greenBorder=${(easy || showAnswer) && isCorrect} redBorder=${showAnswer && !isCorrect} />
         <div class="arrows">
-            <div class="up icon" />
-            <div class="down icon" />
+            <button class="up icon grey-hover" onclick=${() => onMove(listItem, -1)} disabled=${first || showAnswer} title=${getTranslation('moveUp')} aria-label=${getTranslation('moveUp')} />
+            <button class="down icon grey-hover" onclick=${() => onMove(listItem, +1)} disabled=${last || showAnswer} title=${getTranslation('moveDown')} aria-label=${getTranslation('moveDown')} />
         </div>
     `
 }
@@ -28,13 +29,44 @@ const ListItem = ({ listItem, showAnswer, easy, isCorrect }) => {
  */
 const Game = ({ answer, initialList, easy }) => {
     const [list, setList] = useState(initialList)
-    const showAnswer = useState(false)
+    const [changed, setChanged] = useState(initialList.length <= 1)
+    const [showAnswer, setShowAnswer] = useState(false)
+
+    const onMove = useCallback(/** @param {ListItem} li; @param {number} change */ (li, change) => {
+        const i = list.indexOf(li)
+        if (i < 0) return
+        if (change < 0 && i > 0) {
+            const newList = [...list]
+            newList.splice(i, 1)
+            newList.splice(i - 1, 0, li)
+            setList(newList)
+            setChanged(true)
+        } else if (change > 0 && i < list.length - 1) {
+            const newList = [...list]
+            newList.splice(i, 1)
+            newList.splice(i + 1, 0, li)
+            setList(newList)
+            setChanged(true)
+        }
+    }, [list])
+
+    const finish = () => {
+        switchStyles(false)
+        renderMainMenu(answer)
+    }
 
     return html`
-        <div class="sort-game"> 
+        <div class="sort-game">
             ${list.map(/** @param {ListItem} li; @param {number} i */ (li, i) =>
-                html`<${ListItem} key=${li.id} listItem=${li} showAnswer=${showAnswer} easy=${easy} isCorrect=${isListCorrect(answer, list, i)} />`
+                html`<${ListItem} 
+                        key=${li.id} listItem=${li} showAnswer=${showAnswer} 
+                        easy=${easy} isCorrect=${isListCorrect(answer, list, i)}
+                        first=${i === 0} last=${i >= list.length - 1}
+                        onMove=${onMove}
+                    />`
             )}
+            ${(changed && !showAnswer) ? html`<button onclick=${() => setShowAnswer(true)} class="check grey-hover icon" title=${getTranslation('check')} aria-label=${getTranslation('check')} />` : null}
+            ${(showAnswer) ? html`<button onclick=${finish} class="back grey-hover icon" title=${getTranslation('toMainMenu')} aria-label=${getTranslation('toMainMenu')} />` : null}
         </div>
     `
 }

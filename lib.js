@@ -29,20 +29,21 @@ export const isListCorrect = (list1, list2, i = undefined) => {
 
 /**
  * 
- * @param {{ listItem: ListItem }} param0 
+ * @param {{ listItem: ListItem, greenBorder: boolean, redBorder: boolean }} param0 
  * @returns 
  */
-export const ListItemLib = ({ listItem }) => {
+export const ListItemLib = ({ listItem, greenBorder, redBorder }) => {
   const imgSrc = listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined
   useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) })
 
-  console.log(imgSrc)
+  const imgClass = (greenBorder ? 'green-border' : redBorder ? 'red-border' : '')
+  const textClass = (greenBorder ? 'text green-border' : redBorder ? 'text red-border' : 'text')
 
   return html`
     <div class="list-item-lib">
-      ${imgSrc ? html`<img src=${imgSrc} alt=${listItem.description} />` : null}
+      ${imgSrc ? html`<img src=${imgSrc} alt=${listItem.description} class=${imgClass} />` : null}
       <div class="text-container">
-        ${listItem.description ? html`<div class="text" style=${{ color: listItem.descriptionColor, '--color': listItem.descriptionColor, alignSelf: listItem.descriptionPosition }}>${listItem.description}</div>` : null}
+        ${listItem.description ? html`<div class=${textClass} style=${{ color: listItem.descriptionColor, '--color': listItem.descriptionColor, alignSelf: listItem.descriptionPosition }}>${listItem.description}</div>` : null}
       </div>
     </div>
   `

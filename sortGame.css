@@ -1,12 +1,14 @@
 :root {
-    --list-item: min(80vw, 50vh)
+    --list-item-width: 80vw;
+    --list-item-height: 50vh;
+    --arrows: 40px;
+    --check: clamp(40px, 4.9vh, 100px);
 }
 
 .sort-game {
     display: grid;
     gap: var(--space);
-    grid-template-columns: min-content 40px;
-    grid-auto-rows: 1fr;
+    grid-template-columns: min-content var(--arrows);
 }
 
 .list-item-lib {
@@ -15,7 +17,9 @@
 
 .list-item-lib img {
     display: block;
-    height: var(--list-item);    
+    max-height: var(--list-item-height);
+    max-width: var(--list-item-width);
+    border: var(--border-width) solid transparent;
 }
 
 .arrows {
@@ -23,4 +27,27 @@
     gap: var(--space-sm);
     flex-direction: column;
     justify-content: center;
+}
+
+.arrows .up {
+    background-image: url(./assets/arrow-top-icon.svg);
+}
+
+.arrows .down {
+    background-image: url(./assets/arrow-bottom-icon.svg);
+}
+
+.check, .back {
+    position: fixed;
+    bottom: var(--space);
+    right: var(--space);
+    width: var(--check);
+}
+
+.check {
+    background-image: url(./assets/audit-report-survey-icon.svg);
+}
+
+.back {
+    background-image: url(./assets/reply-arrow-icon.svg);
 }
