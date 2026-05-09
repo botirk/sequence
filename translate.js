@@ -25,7 +25,7 @@ const translationRu = {
     notZip: 'Не архив',
     unzipError: 'Ошибка при разархивации',
     sortGame: 'Сортировка',
-    sortGameEasy: 'Сортировка(лёкгий)',
+    sortGameEasy: 'Сортировка(лёгкий)',
     check: 'Проверить',
     toMainMenu: 'В главное меню',
 }
