@@ -79,12 +79,31 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
         }
     }
 
+    const onUrl = async () => {
+        try {
+            setDisabled(true)
+            const url = prompt(getTranslation('loadUrl'), localStorage.getItem('url') || './assets/sequence.zip')
+            if (!url) throw new Error('empty url')
+            const list = await loadListFromUrl(url)
+            renderMainMenu(list)
+            localStorage.setItem('url', url)
+        } catch (e) {
+            console.error(e)
+            alert(getTranslation('unzipError'))
+        } finally {
+            setDisabled(false)
+        }
+        
+        
+    }
+
     return html`
         <div class="top-buttons">
             <div class="first">
                 <label class="cursor-p icon grey-hover" for="select-zip" aria-label=${getTranslation('selectFolder')} title=${getTranslation('selectFolder')}></label>
                 <input disabled=${disabled} id="select-zip" oninput=${inputFiles} type="file" accept=".zip, application/zip, application/x-zip-compressed" />
                 <button disabled=${disabled} onclick=${onSave} type="button" class="save icon grey-hover" aria-label=${getTranslation('saveFolder')} title=${getTranslation('saveFolder')}></button>
+                <button disabled=${disabled} onclick=${onUrl} type="button" class="url icon grey-hover" aria-label=${getTranslation('loadUrl')} title=${getTranslation('loadUrl')}></button>
             </div>
             <div class="second">
                 <select onchange=${onGameSelected} class="interactive" disabled=${disabled}>

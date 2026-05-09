@@ -1,9 +1,9 @@
 // @ts-check
 
 const translationRu = {
-    selectFolder: 'Выбрать папку',
+    selectFolder: 'Выбрать архив',
     selectPic: 'Выбрать картинку',
-    saveFolder: 'Сохранить папку',
+    saveFolder: 'Сохранить как архив',
     addItem: 'Добавить предмет',
     start: 'Верх',
     center: 'Центр',
@@ -28,6 +28,7 @@ const translationRu = {
     sortGameEasy: 'Сортировка(лёгкий)',
     check: 'Проверить',
     toMainMenu: 'В главное меню',
+    loadUrl: 'Загрузить архив по ссылке'
 }
 
 /**

@@ -43,6 +43,10 @@ label[for="select-zip"] {
     background-image: url(./assets/download-icon.svg);
 }
 
+.top-buttons .url {
+    background-image: url(./assets/hyperlink-icon.svg);
+}
+
 .list-container {
     display: grid;
     grid-auto-rows: var(--list-item);
