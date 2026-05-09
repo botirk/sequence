@@ -15,6 +15,14 @@
     justify-self: start;
 }
 
+.list-item-lib:not(:nth-last-child(1 of .list-item-lib))::after {
+    content: "";
+    display: block;
+    width: 100%;
+    border-bottom: var(--border-width) solid var(--main-color);
+    height: var(--border-width);
+}
+
 .list-item-lib img {
     display: block;
     max-height: var(--list-item-height);
