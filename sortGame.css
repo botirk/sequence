@@ -29,7 +29,6 @@ body {
     display: block;
     width: 100%;
     border-bottom: var(--border-width) solid var(--main-color);
-    height: var(--border-width);
     margin-top: var(--gap);
 }
 
