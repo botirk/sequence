@@ -64,6 +64,10 @@ body {
     position: relative;
 }
 
+.list-item-lib img {
+    border: var(--border-width) solid transparent;
+}
+
 .list-item-lib .text-container {
     position: absolute;
     top: 0;
@@ -74,10 +78,6 @@ body {
 
     display: flex;
     justify-content: center;
-}
-
-.list-item-lib img {
-    border: var(--border-width) solid transparent;
 }
 
 .list-item-lib .text-container .text {

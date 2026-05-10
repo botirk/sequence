@@ -337,13 +337,12 @@ const loadListFromUrl = async (url = '') => {
 
 const switchStyles = (state = true) => {
     const link = document.head.querySelector('link[href="main.css"]')
-    if (state && !link) {
-        const link = document.createElement('link')
-        link.href = 'main.css'
-        link.rel = 'stylesheet'
-        document.head.appendChild(link)
-    } else if (!state && link) {
-        link.remove()
+    if (link) {
+        if (state) {
+            link.removeAttribute('disabled')
+        } else if (!state && link) {
+            link.setAttribute('disabled', 'true')
+        }
     }
 }
 

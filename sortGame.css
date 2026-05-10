@@ -3,16 +3,25 @@
     --list-item-height: 50vh;
     --arrows: 40px;
     --check: clamp(40px, 4.9vh, 100px);
+    --gap: var(--space);
+}
+
+body {
+    font-size: var(--fs);
 }
 
 .sort-game {
     display: grid;
-    gap: var(--space);
+    gap: var(--gap);
     grid-template-columns: min-content var(--arrows);
 }
 
 .list-item-lib {
     justify-self: start;
+}
+
+.list-item-lib .text-container {
+    padding-bottom: calc(var(--space) * 2 + var(--border-width));
 }
 
 .list-item-lib:not(:nth-last-child(1 of .list-item-lib))::after {
@@ -21,6 +30,7 @@
     width: 100%;
     border-bottom: var(--border-width) solid var(--main-color);
     height: var(--border-width);
+    margin-top: var(--gap);
 }
 
 .list-item-lib img {
