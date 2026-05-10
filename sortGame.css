@@ -20,7 +20,7 @@ body {
     justify-self: start;
 }
 
-.list-item-lib .text-container {
+.list-item-lib:not(:nth-last-child(1 of .list-item-lib)) .text-container {
     padding-bottom: calc(var(--space) * 2 + var(--border-width));
 }
 
