@@ -1,5 +1,5 @@
 :root {
-    --list-item: clamp(90px, 7.5vh, 200px);
+    --list-item: clamp(97.5px, 7.5vh, 250px);
 }
 
 html,
@@ -143,12 +143,11 @@ label[for="select-zip"] {
     .li-container {
         gap: var(--space-sm);
         grid-template-columns: auto 1fr calc(var(--list-item) / 3.33);
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: 1fr 2fr;
 
         padding-bottom: var(--space);
         border-bottom: var(--border-width) solid var(--main-color);
     }
-
     
 
     .li-container .select-pic {
