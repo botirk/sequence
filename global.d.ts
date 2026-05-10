@@ -1,6 +1,6 @@
 
 
-declare interface ListItem {
+export declare interface ListItem {
     id: number,
     description: string,
     imgFile?: File,
@@ -8,4 +8,4 @@ declare interface ListItem {
     descriptionColor: ('black'|'white'|'red'|'blue'|'green'|string),
 }
 
-declare type List = ListItem[]
+export declare type List = ListItem[]

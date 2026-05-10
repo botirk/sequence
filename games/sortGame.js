@@ -1,9 +1,11 @@
 // @ts-check
 import { render, html, useState, useCallback } from '../assets/preact.mjs'
 
+/** @import { List, ListItem } from "../global" */
 import { shuffleArray, isListCorrect, ListItemLib } from '../lib.js'
 import { renderMainMenu } from '../main.js'
 import { getTranslation } from '../translate.js'
+
 
 
 /** @type {HTMLDivElement} */ // @ts-expect-error exists

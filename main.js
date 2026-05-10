@@ -2,6 +2,7 @@
 import './assets/jszip.min.js'
 import { render, html, useState, useCallback, useEffect } from './assets/preact.mjs'
 
+/** @import { List, ListItem } from "./global" */
 import { getTranslation } from './translate.js'
 import { renderGame as renderSortGame } from './games/sortGame.js'
 
@@ -164,12 +165,12 @@ const ListItem = ({ listItem, disabled, first, last, onMove, onDelete, onUpdate 
             <input id=${`select-pic-${listItem.id}`} onchange=${onSelectPic} type="file" accept=".jpg, .jpeg, .png, image/jpeg, image/png" />
             <input size="1" class="text interactive" value=${listItem.description} oninput=${onDescInput} aria-label=${getTranslation('fillDesc')} title=${getTranslation('fillDesc')} autocomplete="false" disabled=${disabled}/>
             <div class="select-group">
-                <select value=${listItem.descriptionPosition} onchange=${onSelectTextPos} aria-label=${getTranslation('selectTextPos')} title=${getTranslation('selectTextPos')} disabled=${disabled || !listItem.description}>
+                <select class="interactive" value=${listItem.descriptionPosition} onchange=${onSelectTextPos} aria-label=${getTranslation('selectTextPos')} title=${getTranslation('selectTextPos')} disabled=${disabled || !listItem.description}>
                     <option value="start">${getTranslation('start')}</option>
                     <option value="center">${getTranslation('center')}</option>
                     <option value="end">${getTranslation('end')}</option>
                 </select>
-                <select value=${listItem.descriptionColor} onchange=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || !listItem.description}>
+                <select class="interactive" value=${listItem.descriptionColor} onchange=${onSelectTextColor} aria-label=${getTranslation('selectTextColor')}  title=${getTranslation('selectTextColor')} disabled=${disabled || !listItem.description}>
                     <option value="black">${getTranslation('black')}</option>
                     <option value="white">${getTranslation('white')}</option>
                     <option value="red">${getTranslation('red')}</option>
