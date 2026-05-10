@@ -47,11 +47,11 @@ body {
 }
 
 .arrows .up {
-    background-image: url(./assets/arrow-top-icon.svg);
+    background-image: url(../assets/arrow-top-icon.svg);
 }
 
 .arrows .down {
-    background-image: url(./assets/arrow-bottom-icon.svg);
+    background-image: url(../assets/arrow-bottom-icon.svg);
 }
 
 .check, .back {
@@ -62,9 +62,9 @@ body {
 }
 
 .check {
-    background-image: url(./assets/audit-report-survey-icon.svg);
+    background-image: url(../assets/audit-report-survey-icon.svg);
 }
 
 .back {
-    background-image: url(./assets/reply-arrow-icon.svg);
+    background-image: url(../assets/reply-arrow-icon.svg);
 }

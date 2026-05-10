@@ -3,7 +3,7 @@ import './assets/jszip.min.js'
 import { render, html, useState, useCallback, useEffect } from './assets/preact.mjs'
 
 import { getTranslation } from './translate.js'
-import { renderGame as renderSortGame } from './sortGame.js'
+import { renderGame as renderSortGame } from './games/sortGame.js'
 
 // @ts-expect-error
 const JSZip = window.JSZip

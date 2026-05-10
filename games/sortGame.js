@@ -1,9 +1,9 @@
 // @ts-check
-import { render, html, useState, useCallback } from './assets/preact.mjs'
+import { render, html, useState, useCallback } from '../assets/preact.mjs'
 
-import { shuffleArray, isListCorrect, ListItemLib } from './lib.js'
-import { renderMainMenu } from './main.js'
-import { getTranslation } from './translate.js'
+import { shuffleArray, isListCorrect, ListItemLib } from '../lib.js'
+import { renderMainMenu } from '../main.js'
+import { getTranslation } from '../translate.js'
 
 
 /** @type {HTMLDivElement} */ // @ts-expect-error exists
@@ -72,7 +72,7 @@ const Game = ({ answer, initialList, easy }) => {
 }
 
 const switchStyles = (state = true) => {
-    const link = document.head.querySelector('link[href="sortGame.css"]')
+    const link = document.head.querySelector('link[href="./games/sortGame.css"]')
     if (link) {
         if (state) {
             link.removeAttribute('disabled')
