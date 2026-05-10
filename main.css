@@ -1,3 +1,7 @@
+:root {
+    --list-item: clamp(90px, 7.5vh, 200px);
+}
+
 html,
 body {
     height: 100%;
@@ -45,6 +49,11 @@ label[for="select-zip"] {
 
 .top-buttons .url {
     background-image: url(./assets/hyperlink-icon.svg);
+}
+
+.top-buttons .play {
+    background-image: url(./assets/play-icon.svg);
+    appearance: none;
 }
 
 .list-container {
@@ -128,6 +137,7 @@ label[for="select-zip"] {
 
     .list-container {
         padding-bottom: var(--space-sm);
+        grid-auto-rows: calc(var(--list-item) + var(--space-sm));
     }
 
     .li-container {
@@ -135,7 +145,7 @@ label[for="select-zip"] {
         grid-template-columns: auto 1fr calc(var(--list-item) / 3.33);
         grid-template-rows: 1fr 1fr;
 
-        padding-bottom: var(--space-sm);
+        padding-bottom: var(--space);
         border-bottom: var(--border-width) solid var(--main-color);
     }
 

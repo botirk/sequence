@@ -12,7 +12,6 @@
     --fs-mobile: 16px;
 
     --border-width: 2px;
-    --list-item: clamp(82px, 7.5vh, 200px);;
 }
 
 * {
@@ -47,6 +46,7 @@ body {
 }
 
 .interactive, .icon {
+    background-color: white;
     border: var(--border-width) solid var(--main-color);
 }
 
