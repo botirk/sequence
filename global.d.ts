@@ -1,5 +1,3 @@
-
-
 export declare interface ListItem {
     id: number,
     description: string,

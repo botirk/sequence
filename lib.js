@@ -1,6 +1,7 @@
 // @ts-check
-
 import { html, useEffect, useState } from "./assets/preact.mjs";
+
+/** @import { List, ListItem } from "./global" */
 
 /**
  * @template T
@@ -36,13 +37,14 @@ export const ListItemLib = ({ listItem, greenBorder, redBorder }) => {
   const imgSrc = listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined
   useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) })
 
+  const textContainerClass = (imgSrc ? 'text-container' : 'text-container text-only')
   const imgClass = (greenBorder ? 'green-border' : redBorder ? 'red-border' : '')
   const textClass = (greenBorder ? 'text green-border' : redBorder ? 'text red-border' : 'text')
 
   return html`
     <div class="list-item-lib">
       ${imgSrc ? html`<img src=${imgSrc} alt=${listItem.description} class=${imgClass} />` : null}
-      <div class="text-container">
+      <div class=${textContainerClass}>
         ${listItem.description ? html`<div class=${textClass} style=${{ color: listItem.descriptionColor, '--color': listItem.descriptionColor, alignSelf: listItem.descriptionPosition }}>${listItem.description}</div>` : null}
       </div>
     </div>

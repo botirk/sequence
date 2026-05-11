@@ -84,6 +84,10 @@ body {
     justify-content: center;
 }
 
+.list-item-lib .text-container.text-only {
+    position: static;
+}
+
 .list-item-lib .text-container .text {
     text-align: center;
     border: var(--border-width) solid transparent;

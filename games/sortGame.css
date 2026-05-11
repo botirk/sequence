@@ -39,6 +39,10 @@ body {
     border: var(--border-width) solid transparent;
 }
 
+.list-item-lib .text-container.text-only {
+    height: calc(100% - var(--gap));
+}
+
 .arrows {
     display: flex;
     gap: var(--space-sm);
