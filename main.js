@@ -364,4 +364,4 @@ export const renderMainMenu = (list = []) => {
 }
 
 renderMainMenu()
-//await renderSortGame(await loadListFromUrl('assets/sequence.zip'), true)
+//await renderNextGame(await loadListFromUrl('assets/sequence.zip'))
