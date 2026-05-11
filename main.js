@@ -5,6 +5,7 @@ import { render, html, useState, useCallback, useEffect } from './assets/preact.
 /** @import { List, ListItem } from "./global" */
 import { getTranslation } from './translate.js'
 import { renderGame as renderSortGame } from './games/sortGame.js'
+import { renderGame as renderNextGame } from './games/nextGame.js'
 
 // @ts-expect-error
 const JSZip = window.JSZip
@@ -31,6 +32,10 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
             case 'sortGameEasy':
                 switchStyles(false)
                 renderSortGame(list, true)
+                break
+            case 'nextGame':
+                switchStyles(false)
+                renderNextGame(list)
                 break
         }
     }
@@ -111,6 +116,7 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
                     <option></option>
                     <option value="sortGame">${getTranslation('sortGame')}</option>
                     <option value="sortGameEasy">${getTranslation('sortGameEasy')}</option>
+                    <option value="nextGame" disabled>${getTranslation('nextGame')}</option>
                 </select>
                 <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add icon grey-hover" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
             </div>

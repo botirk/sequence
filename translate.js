@@ -24,11 +24,12 @@ const translationRu = {
     zipError: 'Ошибка при архивации',
     notZip: 'Не архив',
     unzipError: 'Ошибка при разархивации',
-    sortGame: 'Сортировка',
-    sortGameEasy: 'Сортировка(лёгкий)',
+    sortGame: '"Сортировка"',
+    sortGameEasy: '"Сортировка(лёгкий)"',
     check: 'Проверить',
     toMainMenu: 'В главное меню',
-    loadUrl: 'Загрузить архив по ссылке'
+    loadUrl: 'Загрузить архив по ссылке',
+    nextGame: '"Следующий"',
 }
 
 /**
