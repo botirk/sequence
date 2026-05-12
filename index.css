@@ -69,6 +69,7 @@ body {
 }
 
 .list-item-lib img {
+    display: block;
     border: var(--border-width) solid transparent;
 }
 

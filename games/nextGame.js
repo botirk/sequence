@@ -28,11 +28,14 @@ const Game = ({ initialPairs }) => {
 
     const curPair = pairs.find(pair => !pair.complete)
     const done = pairs.filter(pair => pair.complete)
+    const isLast = done.length + 1 >= pairs.length
 
 
     return html`
         <div class="cur">
-
+            ${curPair && curPair.reverse && curPair.incorrect ? html`<${ListItemLib} listItem=${curPair.incorrect} /><div class="or">${getTranslation('or')}</div>` : null}
+            ${curPair && curPair.correct ? html`<${ListItemLib} listItem=${curPair.correct} />` : null}
+            ${curPair && !curPair.reverse && curPair.incorrect ? html`<div class="or">${getTranslation('or')}</div><${ListItemLib} listItem=${curPair.incorrect} />` : null}
         </div>
         <div class="done">
             ${done.map(pair => html`<${ListItemLib} listItem=${pair.correct} />`)}

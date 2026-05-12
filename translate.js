@@ -30,6 +30,7 @@ const translationRu = {
     toMainMenu: 'В главное меню',
     loadUrl: 'Загрузить архив по ссылке',
     nextGame: '"Следующий"',
+    or: 'Или',
 }
 
 /**

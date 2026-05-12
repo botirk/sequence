@@ -1,0 +1,37 @@
+html, body {
+    height: 100%;
+}
+
+#container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+
+    height: 100%;
+}
+
+.cur {
+    grid-row: 1;
+    grid-column: 1;
+
+    display: grid;
+    grid-template-rows: 1fr min-content 1fr;
+    justify-content: center;
+    justify-items: center;
+    align-content: center;
+    align-items: center;
+}
+
+.done {
+    grid-row: 1;
+    grid-column: 2;
+}
+
+.cur .list-item-lib {
+    height: auto;
+}
+
+.cur .list-item-lib img {
+    max-height: calc(50vh - 80px);
+    max-width: calc(50vw - 80px);
+}
