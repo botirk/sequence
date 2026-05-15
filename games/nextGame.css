@@ -63,3 +63,28 @@ html, body {
 .done .dummy {
     margin-top: calc(var(--space) * -1);
 }
+
+@media (max-aspect-ratio: 1.0) {
+    #container {
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr;
+    }
+
+    .cur {
+        grid-row: 2;
+        grid-column: 1;
+
+        border-right: initial;
+        border-top: var(--border-width) solid var(--main-color);
+    }
+
+    .done {
+        grid-row: 1;
+        grid-column: 1;
+    }
+
+    .cur .list-item-lib img, .done .list-item-lib img {
+        max-height: calc(100vh / 5);
+        max-width: calc(90vw);
+    }
+}
