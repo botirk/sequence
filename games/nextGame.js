@@ -1,5 +1,5 @@
 // @ts-check
-import { render, html, useState, useCallback } from '../assets/preact.mjs'
+import { render, html, useState, useRef, useEffect } from '../assets/preact.mjs'
 
 /** @import { List, ListItem } from "../global" */
 import { ListItemLib } from '../lib.js'
@@ -18,27 +18,72 @@ import { getTranslation } from '../translate.js'
 /** @type {HTMLDivElement} */ // @ts-expect-error exists
 const container = document.getElementById('container')
 
+const TIMEOUT = 1500
+
 /**
  * 
- * @param {{ initialPairs: ListPair[] }} param0 
+ * @param {{ initialPairs: ListPair[], list: List }} param0 
  */
-const Game = ({ initialPairs }) => {
+const Game = ({ initialPairs, list }) => {
     /** @type {[ListPair[], any]} */
     const [pairs, setPairs] = useState(initialPairs)
+    const [showResponse, setShowResponse] = useState(undefined)
+    const doneEl = useRef()
 
     const curPair = pairs.find(pair => !pair.complete)
     const done = pairs.filter(pair => pair.complete)
-    const isLast = done.length + 1 >= pairs.length
+
+    useEffect(() => {
+        setTimeout(() => { if (doneEl.current) doneEl.current.scrollTop += 10000 }, 100)
+    }, [pairs])
+
+    const onIncorrectSelected = () => {
+        if (showResponse) return
+        setShowResponse(curPair?.incorrect)
+        setTimeout(() => {
+            if (!curPair) return
+            const i = pairs.indexOf(curPair)
+            if (i < 0) return
+            setShowResponse(undefined)
+            const newPairs = [...pairs]
+            newPairs[i] = { ...curPair, error: true }
+            setPairs(newPairs)
+        }, TIMEOUT)
+    }
+
+    const onCorrectSelected = () => {
+        if (showResponse) return
+        setShowResponse(curPair?.correct)
+        setTimeout(() => {
+            if (!curPair) return
+            const i = pairs.indexOf(curPair)
+            if (i < 0) return
+            setShowResponse(undefined)
+            const newPairs = [...pairs]
+            newPairs[i] = { ...curPair, complete: true }
+            setPairs(newPairs)
+        }, TIMEOUT)
+    }
+
+    const incorrectRedBorder = (showResponse === curPair?.incorrect)
+    const correctGreenBorder = (showResponse === curPair?.correct)
+
+    const end = () => {
+        switchStyles(false)
+        renderMainMenu(list)
+    }
 
 
     return html`
         <div class="cur">
-            ${curPair && curPair.reverse && curPair.incorrect ? html`<${ListItemLib} listItem=${curPair.incorrect} /><div class="or">${getTranslation('or')}</div>` : null}
-            ${curPair && curPair.correct ? html`<${ListItemLib} listItem=${curPair.correct} />` : null}
-            ${curPair && !curPair.reverse && curPair.incorrect ? html`<div class="or">${getTranslation('or')}</div><${ListItemLib} listItem=${curPair.incorrect} />` : null}
+            ${curPair && curPair.reverse && curPair.incorrect ? html`<${ListItemLib} listItem=${curPair.incorrect} onclick=${onIncorrectSelected} className="cursor-p"  redBorder=${incorrectRedBorder}  /><div class="or">${getTranslation('or')}</div>` : null}
+            ${curPair && curPair.correct ? html`<${ListItemLib} listItem=${curPair.correct} onclick=${onCorrectSelected} className="cursor-p" greenBorder=${correctGreenBorder} />` : null}
+            ${curPair && !curPair.reverse && curPair.incorrect ? html`<div class="or">${getTranslation('or')}</div><${ListItemLib} listItem=${curPair.incorrect} onclick=${onIncorrectSelected} className="cursor-p" redBorder=${incorrectRedBorder} />` : null}
+            ${!curPair ? html`<div class="end icon grey-hover cursor-p" onclick=${end}/>` : null}
         </div>
-        <div class="done">
-            ${done.map(pair => html`<${ListItemLib} listItem=${pair.correct} />`)}
+        <div class="done" ref=${doneEl}>
+            ${done.map(pair => html`<${ListItemLib} listItem=${pair.correct} redBorder=${pair.error} greenBorder=${!pair.error} />`)}
+            <div class="dummy" />
         </div>
     `
 }
@@ -70,5 +115,5 @@ export const renderGame = (list) => {
 
     render(null, container)
     switchStyles(true)
-    render(html`<${Game} initialPairs=${pairs} />`, container)
+    render(html`<${Game} initialPairs=${pairs} list=${list} />`, container)
 }

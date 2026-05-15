@@ -1,3 +1,7 @@
+:root {
+    --icon: 40px;
+}
+
 html, body {
     height: 100%;
 }
@@ -20,18 +24,42 @@ html, body {
     justify-items: center;
     align-content: center;
     align-items: center;
+
+    border-right: 2px solid var(--main-color);
+}
+
+.cur:has(.end) {
+    grid-template-rows: 1fr;
+}
+
+.cur .list-item-lib, .done .list-item-lib {
+    height: auto;
+}
+
+.cur .list-item-lib img, .done .list-item-lib img {
+    max-height: calc(50vh - 80px);
+    max-width: calc(50vw - 80px);
+}
+
+.cur .end {
+    width: var(--icon);
+    background-image: url(../assets/reply-arrow-icon.svg);
 }
 
 .done {
     grid-row: 1;
     grid-column: 2;
+
+    display: grid;
+    gap: var(--space);
+    grid-auto-rows: min-content;
+    justify-content: center;
+    justify-items: center;
+
+    contain: size;
+    overflow-y: auto;
 }
 
-.cur .list-item-lib {
-    height: auto;
-}
-
-.cur .list-item-lib img {
-    max-height: calc(50vh - 80px);
-    max-width: calc(50vw - 80px);
+.done .dummy {
+    margin-top: calc(var(--space) * -1);
 }

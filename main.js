@@ -116,7 +116,7 @@ const TopMenu = ({ list, onAddListItem, setDisabled, disabled }) => {
                     <option></option>
                     <option value="sortGame">${getTranslation('sortGame')}</option>
                     <option value="sortGameEasy">${getTranslation('sortGameEasy')}</option>
-                    <option value="nextGame" disabled>${getTranslation('nextGame')}</option>
+                    <option value="nextGame">${getTranslation('nextGame')}</option>
                 </select>
                 <button type="button" disabled=${disabled} onclick=${onAddListItem} class="add icon grey-hover" aria-label=${getTranslation('addItem')} title=${getTranslation('addItem')}></button>
             </div>

@@ -30,10 +30,10 @@ export const isListCorrect = (list1, list2, i = undefined) => {
 
 /**
  * 
- * @param {{ listItem: ListItem, greenBorder: boolean, redBorder: boolean }} param0 
+ * @param {{ listItem: ListItem, greenBorder: boolean, redBorder: boolean, onclick?: () => void, className?: string }} param0 
  * @returns 
  */
-export const ListItemLib = ({ listItem, greenBorder, redBorder }) => {
+export const ListItemLib = ({ listItem, greenBorder, redBorder, onclick, className }) => {
   const imgSrc = listItem.imgFile ? URL.createObjectURL(listItem.imgFile) : undefined
   useEffect(() => () => { if (imgSrc) URL.revokeObjectURL(imgSrc) })
 
@@ -42,7 +42,7 @@ export const ListItemLib = ({ listItem, greenBorder, redBorder }) => {
   const textClass = (greenBorder ? 'text green-border' : redBorder ? 'text red-border' : 'text')
 
   return html`
-    <div class="list-item-lib">
+    <div class=${`list-item-lib ${className || ''}`} onclick=${onclick}>
       ${imgSrc ? html`<img src=${imgSrc} alt=${listItem.description} class=${imgClass} />` : null}
       <div class=${textContainerClass}>
         ${listItem.description ? html`<div class=${textClass} style=${{ color: listItem.descriptionColor, '--color': listItem.descriptionColor, alignSelf: listItem.descriptionPosition }}>${listItem.description}</div>` : null}
