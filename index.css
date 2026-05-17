@@ -55,6 +55,7 @@ body {
 }
 
 .icon {
+    min-width: 0;
     display: inline-block;
     aspect-ratio: 1 / 1;
     background-repeat: no-repeat;
@@ -95,7 +96,15 @@ body {
     border-radius: var(--space-sm);
     padding: 0 var(--space-sm);
     --color: black;
-    background-color: contrast-color(var(--color));
+    background-color: white;
+    
+}
+
+@supports (background-color: contrast-color(black)) {
+    .list-item-lib .text-container .text {
+        background-color: contrast-color(var(--color));
+    }
+    
 }
 
 .list-item-lib .green-border {
